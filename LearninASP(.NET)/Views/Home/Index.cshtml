@@ -2,16 +2,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Home Page";
 }
-
-<div>
-    <ul>
-        @foreach (var b in ViewBag.directories)
-        {
-            <li class="notOpened" id="@b.ID">@b.name</li>
-        }
-    </ul>
+<link href="~/Content/listDiv.css" rel="stylesheet" type="text/css" />
+<div class="mainUl">
+    @foreach (var b in ViewBag.directories)
+    {
+        <div class="notOpened typeDir" id="@b.ID" data-marginLevel="0">@b.name</div>
+    }
 </div>
-
 @section Scripts {
     <script src="~/Scripts/ForJQuerry.js" type="text/javascript"></script>
 }

@@ -26,8 +26,22 @@ namespace LearninASP_.NET_.Controllers
                 Id = id,
                 Directories = db.Directories.Where(a => a.ParentID.Equals(id)).ToList()
             };
-
             return Json(shell, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public bool ChangeDir(int id, int parId)
+        {
+            var dropZone = db.Directories.Where(c => c.ID == parId).First();
+            if (dropZone.isFilm == false) {
+                var dragId = db.Directories.Where(c => c.ID == id).First();
+                dragId.ParentID = parId;
+                db.SaveChanges();
+                return true;
+            } else
+            {
+                return false;
+            }
         }
     }
 }
