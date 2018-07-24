@@ -3,10 +3,16 @@
     ViewBag.Title = "Home Page";
 }
 <link href="~/Content/listDiv.css" rel="stylesheet" type="text/css" />
+<div id="userInterface">
+    <div id="inRootButton">в корень</div>
+    <div id="deleteButton">удалить</div>
+</div>
+<br>
+
 <div class="mainUl">
     @foreach (var b in ViewBag.directories)
     {
-        <div class="notOpened typeDir" id="@b.ID" data-marginLevel="0">@b.name</div>
+        <div class="notOpened @(b.isFilm ? "typeFile" : "typeDir")"  id="@b.ID" data-marginLevel="0">@b.name</div>
     }
 </div>
 @section Scripts {

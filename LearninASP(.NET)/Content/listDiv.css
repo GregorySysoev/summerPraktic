@@ -1,6 +1,15 @@
 ﻿.typeFile {
+    color:blue;
 }
 
 .typeDir {
     color:red;
+}
+
+#userInterface {
+    
+}
+
+.opened {
+    background: #D9FFAD;
 }

@@ -43,5 +43,33 @@ namespace LearninASP_.NET_.Controllers
                 return false;
             }
         }
+
+        [HttpPost]
+        public bool DeleteElem (int id)
+        {
+            Directory deleteElem = db.Directories.Find(id);
+            if (null != deleteElem)
+            {
+                if (false == deleteElem.isFilm) recursiveDelete(id);
+                void recursiveDelete(int parId)
+                        {
+                            var dropZone = db.Directories.Where(c => c.ParentID == parId).ToList();
+                            if (!dropZone.Equals(null))
+                            {
+                                foreach (var b in dropZone)
+                                {
+                                    if (false == b.isFilm) recursiveDelete(b.ID);
+                                    db.Directories.Remove(b);
+                                }
+                            }
+                        }
+                db.Directories.Remove(deleteElem);
+                db.SaveChanges();
+                return true;
+            }
+            else return false;
+        }
+
+       
     }
 }
