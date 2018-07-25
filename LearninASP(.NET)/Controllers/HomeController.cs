@@ -32,15 +32,23 @@ namespace LearninASP_.NET_.Controllers
         [HttpPost]
         public bool ChangeDir(int id, int parId)
         {
-            var dropZone = db.Directories.Where(c => c.ID == parId).First();
-            if (dropZone.isFilm == false) {
-                var dragId = db.Directories.Where(c => c.ID == id).First();
-                dragId.ParentID = parId;
-                db.SaveChanges();
-                return true;
+            if (0 != parId)
+            {
+                var dropZone = db.Directories.Where(c => c.ID == parId).First();
+                if (dropZone.isFilm == false)
+                {
+                    var dragId = db.Directories.Where(c => c.ID == id).First();
+                    dragId.ParentID = parId;
+                    db.SaveChanges();
+                    return true;
+                }
+                else return false;
             } else
             {
-                return false;
+                var dragId = db.Directories.Where(c => c.ID == id).First();
+                dragId.ParentID = 0;
+                db.SaveChanges();
+                return true;
             }
         }
 
@@ -52,17 +60,17 @@ namespace LearninASP_.NET_.Controllers
             {
                 if (false == deleteElem.isFilm) recursiveDelete(id);
                 void recursiveDelete(int parId)
+                {
+                    var dropZone = db.Directories.Where(c => c.ParentID == parId).ToList();
+                    if (!dropZone.Equals(null))
+                    {
+                        foreach (var b in dropZone)
                         {
-                            var dropZone = db.Directories.Where(c => c.ParentID == parId).ToList();
-                            if (!dropZone.Equals(null))
-                            {
-                                foreach (var b in dropZone)
-                                {
-                                    if (false == b.isFilm) recursiveDelete(b.ID);
-                                    db.Directories.Remove(b);
-                                }
-                            }
+                            if (false == b.isFilm) recursiveDelete(b.ID);
+                            db.Directories.Remove(b);
                         }
+                    }
+                }
                 db.Directories.Remove(deleteElem);
                 db.SaveChanges();
                 return true;

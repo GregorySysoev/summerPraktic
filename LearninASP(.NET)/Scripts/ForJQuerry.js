@@ -4,21 +4,18 @@
     $(".navbar-inverse").hide();
     $('footer').empty();
 
-    $("#inRootButton").droppable({
+    $('#inRootButton').droppable({
         drop: function (event, ui) {
-            $("#inRootButton").hide();
-            $("#deleteButton").hide();
+            changeDirectory(ui, 0);
         }
     }).bind("mouseover", function () {
         $(this).css('text-decoration', 'underline')
     }).bind("mouseout", function () {
         $(this).css('text-decoration', '')
-    }); 
+    });
 
-    $("#deleteButton").droppable({
+    $('#deleteButton').droppable({
         drop: function (event, ui) {
-            $("#inRootButton").hide();
-            $("#deleteButton").hide();
             deleteElement(ui);
         }
     }).bind("mouseover", function () {
@@ -27,9 +24,16 @@
         $(this).css('text-decoration', '')
     });
 
-    $("#inRootButton").hide();
-    $("#deleteButton").hide();
-
+    $('#renameButton').droppable({
+        drop: function (event, ui) {
+        }
+    }).bind("mouseover", function () {
+        $(this).css('text-decoration', 'underline')
+    }).bind("mouseout", function () {
+        $(this).css('text-decoration', '')
+    });
+    
+    $(document).disableSelection();
     var neededElements = $('.notOpened');
     $.each(neededElements, function (index, value) {
         addListener(value);
@@ -53,7 +57,6 @@ function printDirectory(data) {
             $('#' + value.ID).css('margin-left', function (){
                 return 20 * marginLevel;
             });
-
             $('#' + value.ID).addClass("" + it);
             ((value.isFilm) ? $('#' + value.ID).addClass('typeFile') : $('#' + value.ID).addClass('typeDir'));
             addListener($('#' + value.ID));
@@ -64,28 +67,24 @@ function printDirectory(data) {
 function addListener(unit) {
     $(unit).unbind("click drag");
     $(unit).draggable({
+        delay: 400,
         revert: true,
-        opacity: 0.35
+        opacity: 0.35,
     }).bind("mouseover", function () {
         $(this).css('text-decoration', 'underline')
     }).bind("mouseout", function () {
         $(this).css('text-decoration', '')
     });
-
-    $(unit).draggable({
+    $(unit).droppable({
         drop: function (event, ui) {
             changeDirectory(ui, $(this).attr('id'));
         }
     });
-    $(unit).bind("drag", function () {
-        $("#inRootButton").show();
-        $("#deleteButton").show();
-    })
-    $(unit).bind("mouseup", function () {
-        $("#inRootButton").hide();
-        $("#deleteButton").hide();
-    })
-    
+    $(unit).bind("drag", function (event, ui) {
+    });
+    $(unit).bind("mouseup", function (event, ui) {
+    });
+  
     if ($(unit).hasClass("notOpened")) {
         notOpenDirListener(unit);
     } else {
@@ -117,7 +116,7 @@ function removeChildren(str) {
     var arr = document.getElementsByClassName(str);
     $.each(arr, function (index, value) {
         removeChildren($(value).attr('id'));
-    })
+    });
     $('.' + str).remove();
 }
 
@@ -125,9 +124,35 @@ function changeDirectory(dropElem, curId) {
     var it = dropElem.draggable.attr('id');
     $.post("/Home/ChangeDir?id=" + it + "&parId=" + curId, null, olert);
     function olert(result) {
-        if (result) {
-            $('#' + curId).after("<div class=\"notOpened\" id=\"" + value.ID + "\" data-marginLevel=\"" + (marginLevel) + "\">" + value.name + "</div>");
+        if (result === "True") {
+            var name = dropElem.draggable.context.textContent;
+            var margLevelOfDropElem = +($('#' + curId).attr('data-marginLevel')) + 1;
+            var isFilm = dropElem.draggable.hasClass('typeDir');
+            var isOpen = dropElem.draggable.hasClass('opened');
+
             $('#' + it).remove();
+            if (0 != curId) {
+                if ($('#' + curId).hasClass('opened'))
+                    $('#' + curId).after("<div class=\"notOpened\" id=\"" + it + "\" data-marginLevel=\"" + margLevelOfDropElem + "\">" + name + "</div>");
+                $('#' + it).css('margin-left', function () {
+                    return 20 * margLevelOfDropElem;
+                });
+                $('#' + it).addClass("" + curId);
+            } else {
+                $('.mainUl').append("<div class=\"notOpened\" id=\"" + it + "\" data-marginLevel=\"" + 0 + "\">" + name + "</div>")
+            }
+            if (true === isOpen) {
+                $('#' + it).removeClass('notOpened');
+                $('#' + it).addClass('opened');
+            }
+            addListener($('#' + it));
+            
+            if (true === isFilm) {
+                $('#' + it).addClass('typeDir');
+            } else {
+                $('#' + it).addClass('typeFile');
+            }
+            removeChildren(it);
         } else alert("Impossible to push in file");
     }
 }

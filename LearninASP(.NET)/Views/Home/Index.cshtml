@@ -3,18 +3,22 @@
     ViewBag.Title = "Home Page";
 }
 <link href="~/Content/listDiv.css" rel="stylesheet" type="text/css" />
-<div id="userInterface">
+
+
+<div class="userInterface">
     <div id="inRootButton">в корень</div>
     <div id="deleteButton">удалить</div>
+    <div id="renameButton">переименовать</div>
 </div>
 <br>
-
 <div class="mainUl">
     @foreach (var b in ViewBag.directories)
     {
         <div class="notOpened @(b.isFilm ? "typeFile" : "typeDir")"  id="@b.ID" data-marginLevel="0">@b.name</div>
     }
 </div>
+<br>
+
 @section Scripts {
     <script src="~/Scripts/ForJQuerry.js" type="text/javascript"></script>
 }
