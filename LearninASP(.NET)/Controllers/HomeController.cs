@@ -78,6 +78,28 @@ namespace LearninASP_.NET_.Controllers
             else return false;
         }
 
-       
+        [HttpPost]
+        public void renameElement(int id, string newName)
+        {
+            var needToRename = db.Directories.Where(c => c.ID == id).First();
+            needToRename.name = newName;
+            db.SaveChanges();
+        }
+
+        [HttpPost]
+        public JsonResult CreateNewDir (string newDirName)
+        {
+            Directory newDir = new Directory
+            {
+                ParentID = 0,
+                name = newDirName,
+                isFilm = false,
+                path = null
+            };
+            db.Directories.Add(newDir);
+            db.SaveChanges();
+
+            return Json(newDir, JsonRequestBehavior.AllowGet);
+        }
     }
 }

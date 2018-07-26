@@ -4,6 +4,21 @@
     $(".navbar-inverse").hide();
     $('footer').empty();
 
+    $("#progress").progressbar({
+    });
+
+    $("#newDir").bind("click", function () {
+        var newDir = prompt("Введите название");
+        if (newDir.length != 0) {
+            $.post("/Home/CreateNewDir?newDirName=" + newDir, null, createDir);
+            function createDir(result) {
+                $('.mainUl').append("<div class=\"notOpened\" id=\"" + result.ID + "\" data-marginLevel=\"" + 0 + "\">" + result.name + "</div>");
+                $('#' + result.ID).addClass('typeDir');
+                addListener($('#' + result.ID));
+            }
+        } else alert("Невозможно создать директорию без названия");
+    })
+
     $('#inRootButton').droppable({
         drop: function (event, ui) {
             changeDirectory(ui, 0);
@@ -26,6 +41,7 @@
 
     $('#renameButton').droppable({
         drop: function (event, ui) {
+            renameElement(ui);
         }
     }).bind("mouseover", function () {
         $(this).css('text-decoration', 'underline')
@@ -166,3 +182,27 @@ function deleteElement(ui) {
         } else alert("Something gone wrong");
     }
 }
+
+function renameElement(ui) {
+    var newName = prompt("Введите желаемое название");
+    var it = ui.draggable.attr('id');
+    if (0 != newName.length) {
+        $.post("/Home/renameElement?id=" + it + "&newName=" + newName, null, rename);
+        function rename() {
+            $('#' + it).html(newName);
+        }
+    } else alert("Строка пуста. Повторите попытку");
+}
+
+//function sortAlphabet(boolSortingBy) {
+//    var lis = document.getElementsByClassName('mainUl');
+//    var vals = [];
+//    $.each(item in lis);
+//    for (var i = 0; l = lis.length, i < l; i++) {
+//        vals.push(lis.item);
+//    }
+
+//    if (boolSortingBy === "True") { }
+//    else {}
+//}
+
