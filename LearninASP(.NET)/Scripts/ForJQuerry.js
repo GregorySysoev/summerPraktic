@@ -4,8 +4,13 @@
     $(".navbar-inverse").hide();
     $('footer').empty();
 
-    $("#progress").progressbar({
-    });
+    $("#progress").progressbar();
+    $("#sortByInc").bind("click", function () {
+        sortAlphabet("mainUl", true);
+    })
+    $("#sortByDec").bind("click", function () {
+        sortAlphabet("mainUl", false);
+    })
 
     $("#newDir").bind("click", function () {
         var newDir = prompt("Введите название");
@@ -157,6 +162,9 @@ function changeDirectory(dropElem, curId) {
             } else {
                 $('.mainUl').append("<div class=\"notOpened\" id=\"" + it + "\" data-marginLevel=\"" + 0 + "\">" + name + "</div>")
             }
+            if (curId === 0) $('#' + it).addClass('root');
+            else $('#' + it).removeClass('root');
+
             if (true === isOpen) {
                 $('#' + it).removeClass('notOpened');
                 $('#' + it).addClass('opened');
@@ -194,15 +202,42 @@ function renameElement(ui) {
     } else alert("Строка пуста. Повторите попытку");
 }
 
-//function sortAlphabet(boolSortingBy) {
-//    var lis = document.getElementsByClassName('mainUl');
-//    var vals = [];
-//    $.each(item in lis);
-//    for (var i = 0; l = lis.length, i < l; i++) {
-//        vals.push(lis.item);
-//    }
+function sortAlphabet(str, way) {
+    var myList  = $('.'+str);
+    var listItems  = myList.children().get();
 
-//    if (boolSortingBy === "True") { }
-//    else {}
-//}
+    listItems.sort(function (a, b) {
+        return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
+    })
+    if (!way) listItems.reverse();
+
+    $.each(listItems, function (idx, itm) {
+        myList.append(itm);
+    });
+
+    function replaceClass(classOf) {
+        var list1 = [];
+        var i = 0;
+        $.each(listItems, function (idx, itm) {
+            if ($(itm).hasClass(classOf)) list1.push(itm);
+        });
+        $.each(list1, function (idx, idm) {
+            if (0 === i) $(list1).insertAfter($('#' + classOf));
+            else $(list1).insertAfter($(idm).attr('id'));
+            if (document.getElementsByClassName($(idm).attr('id')).length != 0) replaceClass($(idm).attr('id'));
+            i++;
+        });
+    }
+
+    var list = [];
+
+    $.each(listItems, function (idx, itm) {
+        if ($(itm).hasClass('root')) list.push(itm);
+    });
+
+    $.each(list, function (idx, itm) {
+        replaceClass($(itm).attr('id'));
+    });
+
+}
 

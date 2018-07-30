@@ -5,6 +5,8 @@
 <link href="~/Content/listDiv.css" rel="stylesheet" type="text/css" />
 
 <div id="progress"></div>
+<button id="sortByInc">Сортировать по возврастанию</button>
+<button id="sortByDec">Сортировать по убыванию</button>
 <button id="newDir">Добавить новую директорию</button>
 <div class="userInterface">
     <div id="inRootButton">в корень</div>
@@ -15,7 +17,7 @@
 <div class="mainUl">
     @foreach (var b in ViewBag.directories)
     {
-        <div class="notOpened @(b.isFilm ? "typeFile" : "typeDir")"  id="@b.ID" data-marginLevel="0">@b.name</div>
+        <div class="root notOpened @(b.isFilm ? "typeFile" : "typeDir")" id="@b.ID" data-marginLevel="0">@b.name</div>
     }
 </div>
 <br>
